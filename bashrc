@@ -5,8 +5,8 @@
 
 # User Info
 
-export USERNAME="Chih-Feng Lin"
-export NICKNAME="Chih-Feng"
+USERNAME="Chih-Feng Lin"
+NICKNAME="Chih-Feng"
 
 # Distribute bashrc into smaller, more specific files
 
@@ -18,5 +18,14 @@ source $HOME/.shells/prompt   # Fancy prompt with time and current working dir
 source $HOME/.shells/git      # Conveniences - Display current branch etc
 
 # Welcome message
-echo -ne "Good Morning, $NICKNAME! It's "; date '+%A, %B %-d %Y'
+cur_hour=`date "+%H"`
+if [ $cur_hour -ge 6 ] && [ $cur_hour -lt 12 ]; then
+    WELCOME_SENTENCE="Good Morning"
+elif [ $cur_hour -ge 12 ] && [ $cur_hour -lt 18 ]; then
+    WELCOME_SENTENCE="Good Afternoon"
+else
+    WELCOME_SENTENCE="Good Evening"
+fi
+
+echo -ne "$WELCOME_SENTENCE, $NICKNAME! It's "; date '+%A, %B %-d %Y'
 
