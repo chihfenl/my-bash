@@ -1,0 +1,43 @@
+# Starship prompt — mirrors the old bash prompt:
+#   bold green  user@host
+#   bold red    working directory (full path)
+#   git branch in parens + a dirty marker, then a prompt char on a new line.
+# Shared by both ~/.bashrc and ~/.zshrc.
+
+add_newline = true
+
+format = """
+$username$hostname $directory$git_branch$git_status
+$character"""
+
+[username]
+show_always = true
+style_user = "bold green"
+style_root = "bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+style = "bold green"
+format = "[@$hostname]($style)"
+
+[directory]
+style = "bold red"
+truncation_length = 0      # 0 = show the full path, like bash \w
+truncate_to_repo = false
+format = "[$path]($style) "
+
+[git_branch]
+symbol = ""
+style = ""               # default terminal color, like the old `$git_branch`
+format = "[\\($symbol$branch\\)]($style)"   # (branch) in parens, like the old prompt
+
+[git_status]
+style = "bold blue"      # like the old bold-blue `$git_dirty`
+modified = "*"           # unstaged changes, like the old `*`
+staged = "^"             # staged-only changes, like the old `^`
+format = "([$modified$staged]($style))"   # bare * / ^ right after the branch, like the old `$git_dirty`
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"

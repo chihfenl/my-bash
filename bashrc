@@ -14,18 +14,12 @@ NICKNAME="Chih-Feng"
 source $HOME/.shells/functions
 source $HOME/.shells/exports
 source $HOME/.shells/alias
-source $HOME/.shells/prompt   # Fancy prompt with time and current working dir
-source $HOME/.shells/git      # Conveniences - Display current branch etc
 
-# Welcome message
-cur_hour=`date "+%H"`
-if [ $cur_hour -ge 6 ] && [ $cur_hour -lt 12 ]; then
-    WELCOME_SENTENCE="Good Morning"
-elif [ $cur_hour -ge 12 ] && [ $cur_hour -lt 18 ]; then
-    WELCOME_SENTENCE="Good Afternoon"
-else
-    WELCOME_SENTENCE="Good Evening"
-fi
+# Prompt (cross-shell, via Starship) — replaces the old prompt/git PS1 files
+eval "$(starship init bash)"
 
-echo -ne "$WELCOME_SENTENCE, $NICKNAME! It's "; date '+%A, %B %-d %Y'
+# Welcome message (time-aware greeting, defined in ~/.shells/functions)
+greeting
+
+. "$HOME/.local/bin/env"
 

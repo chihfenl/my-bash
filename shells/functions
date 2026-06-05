@@ -1,0 +1,15 @@
+# Shared shell functions, sourced by both ~/.bashrc and ~/.zshrc.
+
+# Print a greeting that changes with the time of day, plus today's date.
+greeting() {
+    local hour part
+    hour=$(date +%H); hour=${hour#0}   # 0-23, leading zero stripped to avoid octal in -lt
+    if   [ "$hour" -lt 5 ];  then part="Good Night"
+    elif [ "$hour" -lt 12 ]; then part="Good Morning"
+    elif [ "$hour" -lt 18 ]; then part="Good Afternoon"
+    elif [ "$hour" -lt 22 ]; then part="Good Evening"
+    else                          part="Good Night"
+    fi
+    echo -ne "$part, $NICKNAME! It's "
+    date '+%A, %B %-d %Y'
+}

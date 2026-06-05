@@ -13,16 +13,23 @@ alias ll="ls -l"
 # Cool colors for man pages
 alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
 
-# Enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
+# Enable color support of ls, handling both GNU (Linux) and BSD (macOS) tools
+if command -v dircolors >/dev/null 2>&1; then
+    # GNU coreutils (Linux)
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
     alias dir='dir --color=auto'
     alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+else
+    # BSD tools (macOS)
+    export CLICOLOR=1
+    alias ls='ls -G'
 fi
+
+# grep colors work on both GNU and BSD grep
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 # This one is to take care of make
 # Give me a nice, distinguishable make output

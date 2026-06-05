@@ -1,1 +1,93 @@
 # my-bash
+
+Personal shell configuration for **macOS**, shared across **bash** and **zsh**.
+
+One set of portable files (PATH, environment, aliases) is sourced by both shells,
+and the prompt is drawn by [Starship](https://starship.rs) so it looks identical in
+either shell.
+
+## Layout
+
+| Repo file | Installs to | Purpose |
+|-----------|-------------|---------|
+| `bashrc` | `~/.bashrc` | bash entry point |
+| `zshrc` | `~/.zshrc` | zsh entry point |
+| `shells/exports` | `~/.shells/exports` | PATH, Homebrew prefix detection, `pyenv`/`jenv`/`scalaenv`/`sbtenv` |
+| `shells/alias` | `~/.shells/alias` | aliases + `ls`/`grep` colors (works on GNU **and** BSD/macOS) |
+| `shells/functions` | `~/.shells/functions` | shared shell functions (e.g. the time-aware greeting) |
+| `shells/prompt`, `shells/git` | `~/.shells/` | legacy bash prompt — kept for reference, **no longer sourced** (Starship replaces it) |
+| `starship.toml` | `~/.config/starship.toml` | prompt config, shared by both shells |
+
+Both `bashrc` and `zshrc` do the same thing: set user info → source the shared
+`functions`/`exports`/`alias` → `eval "$(starship init <shell>)"` → print a time-aware
+welcome banner.
+
+## Prerequisites
+
+- macOS (Intel **or** Apple Silicon — the Homebrew prefix is detected automatically)
+- [Homebrew](https://brew.sh)
+- [Starship](https://starship.rs) — `brew install starship`
+- *Optional* version managers, auto-loaded only if present: `pyenv`, `jenv`, `scalaenv`, `sbtenv`
+
+## Setup
+
+Clone the repo, then symlink the files into place (symlinks keep the repo as the
+single source of truth — edits here go live immediately, with no copying):
+
+```bash
+git clone <this-repo> ~/code/my-bash
+cd ~/code/my-bash
+
+# 1. shared shell snippets (sourced by both shells)
+mkdir -p ~/.shells
+for f in functions exports alias; do ln -sf "$PWD/shells/$f" ~/.shells/"$f"; done
+
+# 2. shell entry points
+ln -sf "$PWD/bashrc" ~/.bashrc
+ln -sf "$PWD/zshrc"  ~/.zshrc
+
+# 3. prompt
+brew install starship
+mkdir -p ~/.config
+ln -sf "$PWD/starship.toml" ~/.config/starship.toml
+```
+
+Reload your shell — `exec zsh` (or `exec bash`), or just open a new terminal.
+
+To make zsh your login shell (it's the macOS default since Catalina):
+
+```bash
+chsh -s /bin/zsh
+```
+
+## The prompt
+
+Starship draws a two-line prompt that mirrors the original hand-rolled bash style:
+
+```
+user@host  ~/current/dir  (branch)*
+❯
+```
+
+- bold **green** `user@host`
+- bold **red** working directory
+- `(branch)` in the default color
+- bold **blue** dirty marker — `*` = unstaged changes, `^` = staged-only, nothing = clean working tree
+
+Tweak `starship.toml` to customize; see <https://starship.rs/config/>.
+
+## Secrets
+
+Keep credentials **out of this repo.** Anything sensitive (AWS keys, API tokens, etc.)
+belongs in a local, untracked file — e.g. `~/.shells/aws` — that you source from your
+own machine only. Never commit secret files; add them to `.gitignore`.
+
+## Notes
+
+- The greeting changes with the time of day (morning / afternoon / evening / night),
+  driven by the `greeting` function in `shells/functions`.
+- The shell entry points end with `. "$HOME/.local/bin/env"` (added by tools like `uv`).
+  If that file doesn't exist on your machine, remove the line or guard it with
+  `[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"` to avoid a startup error.
+- `shells/prompt` and `shells/git` are kept only for history. The live prompt is Starship.
+```

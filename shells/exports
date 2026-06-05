@@ -1,3 +1,11 @@
+# Using Homebrew binaries first.
+# Detect the prefix by which brew actually exists, so it works on both
+# Apple Silicon (/opt/homebrew) and Intel (/usr/local), and stays correct
+# even when the shell runs under Rosetta.
+for BREW_PREFIX in /opt/homebrew /usr/local; do
+  [ -x "$BREW_PREFIX/bin/brew" ] && break
+done
+export PATH=$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$PATH
 
 type jenv >/dev/null
 if [ $? -eq 0 ] ; then
@@ -11,19 +19,26 @@ type sbtenv >/dev/null
 if [ $? -eq 0 ] ; then
   eval "$(sbtenv init -)"
 fi
+type pyenv >/dev/null
+if [ $? -eq 0 ] ; then
+  eval "$(pyenv init -)"
+fi
 
-export JAVA_HOME=`/usr/libexec/java_home`
+#export JAVA_HOME=`/usr/libexec/java_home`
 export JENV_HOME=$HOME/.jenv
 export SCALAENV_HOME=$HOME/.scalaenv
 export SBTENV=$HOME/.sbtenv
 export SPARK_PATH=$HOME/Documents/tools/spark-2.4.3-bin-hadoop2.7
 
-# Using local binary first for Homebrew
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-export PATH=$PATH:$JAVA_HOME:$JENV_HOME/bin:$SCALAENV_HOME/bin:$SBTENV/bin:$SPARK_PATH/bin
+export PATH=$PATH:$JAVA_HOME:$SPARK_PATH/bin:$HOME/.local/bin
 #export DYLD_LIBRARY_PATH=/usr/local/Cellar/openssl/1.0.2q/lib
 
 # Setting up for pyenv
-export PATH="$HOME/.pyenv/shims:$PATH"
-eval "$(pyenv init -)"
+#export PATH="$HOME/.pyenv/shims:$PATH"
 #eval "$(pyenv virtualenv-init -)"
+
+# Setting up for jenv
+#export PATH="$HOME/.jenv/shims:$PATH"
+
+# Setting up for sbvenv
+#export PATH="$HOME/.sbtenv/shims:$PATH"
