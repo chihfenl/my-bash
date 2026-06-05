@@ -1,10 +1,6 @@
 # ${HOME}/.zshrc: executed by zsh for interactive shells.
 
-# User Info
-export USERNAME="Chih-Feng Lin"
-export NICKNAME="Chih-Feng"
-
-# Shared, portable shell config (also sourced by ~/.bashrc)
+# Shared, portable shell config (user info, PATH, functions, aliases)
 source $HOME/.shells/functions
 source $HOME/.shells/exports
 source $HOME/.shells/alias
@@ -15,4 +11,4 @@ eval "$(starship init zsh)"
 # Welcome message (time-aware greeting, defined in ~/.shells/functions)
 greeting
 
-. "$HOME/.local/bin/env"
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"

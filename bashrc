@@ -3,14 +3,7 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# User Info
-
-USERNAME="Chih-Feng Lin"
-NICKNAME="Chih-Feng"
-
-# Distribute bashrc into smaller, more specific files
-
-#source $HOME/.shells/defaults
+# Shared, portable shell config (user info, PATH, functions, aliases)
 source $HOME/.shells/functions
 source $HOME/.shells/exports
 source $HOME/.shells/alias
@@ -21,5 +14,4 @@ eval "$(starship init bash)"
 # Welcome message (time-aware greeting, defined in ~/.shells/functions)
 greeting
 
-. "$HOME/.local/bin/env"
-
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"

@@ -12,11 +12,12 @@ either shell.
 |-----------|-------------|---------|
 | `bashrc` | `~/.bashrc` | bash entry point |
 | `zshrc` | `~/.zshrc` | zsh entry point |
-| `shells/exports` | `~/.shells/exports` | PATH, Homebrew prefix detection, `pyenv`/`jenv`/`scalaenv`/`sbtenv` |
+| `shells/exports` | `~/.shells/exports` | user info, PATH, Homebrew prefix detection, version managers (`pyenv`/`jenv`/`scalaenv`/`sbtenv`) |
 | `shells/alias` | `~/.shells/alias` | aliases + `ls`/`grep` colors (works on GNU **and** BSD/macOS) |
 | `shells/functions` | `~/.shells/functions` | shared shell functions (e.g. the time-aware greeting) |
 | `shells/prompt`, `shells/git` | `~/.shells/` | legacy bash prompt — kept for reference, **no longer sourced** (Starship replaces it) |
 | `starship.toml` | `~/.config/starship.toml` | prompt config, shared by both shells |
+| `install.sh` | — | idempotent symlink installer (see Setup) |
 
 Both `bashrc` and `zshrc` do the same thing: set user info → source the shared
 `functions`/`exports`/`alias` → `eval "$(starship init <shell>)"` → print a time-aware
@@ -31,13 +32,23 @@ welcome banner.
 
 ## Setup
 
-Clone the repo, then symlink the files into place (symlinks keep the repo as the
-single source of truth — edits here go live immediately, with no copying):
+Clone the repo, then run the installer. It symlinks everything into place (so the
+repo stays the single source of truth — edits go live with no copying) and is safe
+to re-run: any real file already in the way is backed up to `*.bak` first.
 
 ```bash
 git clone <this-repo> ~/code/my-bash
 cd ~/code/my-bash
+brew install starship   # if you don't have it yet
+./install.sh
+```
 
+Reload your shell — `exec zsh` (or `exec bash`), or just open a new terminal.
+
+<details>
+<summary>Manual setup (what <code>install.sh</code> does)</summary>
+
+```bash
 # 1. shared shell snippets (sourced by both shells)
 mkdir -p ~/.shells
 for f in functions exports alias; do ln -sf "$PWD/shells/$f" ~/.shells/"$f"; done
@@ -51,8 +62,7 @@ brew install starship
 mkdir -p ~/.config
 ln -sf "$PWD/starship.toml" ~/.config/starship.toml
 ```
-
-Reload your shell — `exec zsh` (or `exec bash`), or just open a new terminal.
+</details>
 
 To make zsh your login shell (it's the macOS default since Catalina):
 

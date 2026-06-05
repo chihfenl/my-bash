@@ -1,3 +1,7 @@
+# User info — shared by both ~/.bashrc and ~/.zshrc.
+export USERNAME="Chih-Feng Lin"
+export NICKNAME="Chih-Feng"
+
 # Using Homebrew binaries first.
 # Detect the prefix by which brew actually exists, so it works on both
 # Apple Silicon (/opt/homebrew) and Intel (/usr/local), and stays correct
@@ -7,22 +11,12 @@ for BREW_PREFIX in /opt/homebrew /usr/local; do
 done
 export PATH=$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$PATH
 
-type jenv >/dev/null
-if [ $? -eq 0 ] ; then
-  eval "$(jenv init -)"
-fi
-type scalaenv >/dev/null
-if [ $? -eq 0 ] ; then
-  eval "$(scalaenv init -)"
-fi
-type sbtenv >/dev/null
-if [ $? -eq 0 ] ; then
-  eval "$(sbtenv init -)"
-fi
-type pyenv >/dev/null
-if [ $? -eq 0 ] ; then
-  eval "$(pyenv init -)"
-fi
+# Version managers — load each only if it's installed.
+# (command -v avoids the stderr leak of `type` and the redundant $? check.)
+for _vm in jenv scalaenv sbtenv pyenv; do
+  command -v "$_vm" >/dev/null 2>&1 && eval "$("$_vm" init -)"
+done
+unset _vm
 
 #export JAVA_HOME=`/usr/libexec/java_home`
 export JENV_HOME=$HOME/.jenv
@@ -30,15 +24,12 @@ export SCALAENV_HOME=$HOME/.scalaenv
 export SBTENV=$HOME/.sbtenv
 export SPARK_PATH=$HOME/Documents/tools/spark-2.4.3-bin-hadoop2.7
 
-export PATH=$PATH:$JAVA_HOME:$SPARK_PATH/bin:$HOME/.local/bin
+# Append optional dirs to PATH — but only when the var is set AND the dir
+# exists. An empty element (e.g. unset $JAVA_HOME) would expand to "::",
+# which Unix treats as the current directory: a PATH security hazard.
+for _dir in "$JAVA_HOME" "$SPARK_PATH/bin" "$HOME/.local/bin"; do
+  [ -n "$_dir" ] && [ -d "$_dir" ] && PATH="$PATH:$_dir"
+done
+unset _dir
+export PATH
 #export DYLD_LIBRARY_PATH=/usr/local/Cellar/openssl/1.0.2q/lib
-
-# Setting up for pyenv
-#export PATH="$HOME/.pyenv/shims:$PATH"
-#eval "$(pyenv virtualenv-init -)"
-
-# Setting up for jenv
-#export PATH="$HOME/.jenv/shims:$PATH"
-
-# Setting up for sbvenv
-#export PATH="$HOME/.sbtenv/shims:$PATH"

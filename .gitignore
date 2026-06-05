@@ -1,0 +1,14 @@
+# Local, machine-only secrets — never commit these (see README "Secrets")
+aws
+shells/aws
+secrets
+*.secret
+*.local
+.env
+
+# Backups created by install.sh
+*.bak
+
+# macOS / editor cruft
+.DS_Store
+*.swp
