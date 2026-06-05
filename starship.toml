@@ -1,14 +1,20 @@
-# Starship prompt — mirrors the old bash prompt:
+# Starship prompt — the old-bash look, enhanced with contextual modules.
 #   bold green  user@host
 #   bold red    working directory (full path)
-#   git branch in parens + a dirty marker, then a prompt char on a new line.
+#   git (branch) + dirty / ahead-behind, language versions, exit code.
+# Contextual modules appear ONLY when relevant, so plain dirs stay minimal.
+#
+# Some symbols are Nerd Font glyphs — set your terminal font to a Nerd Font
+# (e.g. "FiraCode Nerd Font") or they'll show as boxes. The base prompt
+# (user@host, path, branch, *) works in any font.
+#
 # Shared by both ~/.bashrc and ~/.zshrc.
 
 add_newline = true
 
 format = """
-$username$hostname $directory$git_branch$git_status
-$character"""
+$username$hostname $directory$git_branch$git_status$python$java$scala
+$status$character"""
 
 [username]
 show_always = true
@@ -28,7 +34,7 @@ truncate_to_repo = false
 format = "[$path]($style) "
 
 [git_branch]
-symbol = ""
+symbol = ""              # no glyph — keep the plain (branch) look
 style = ""               # default terminal color, like the old `$git_branch`
 format = "[\\($symbol$branch\\)]($style)"   # (branch) in parens, like the old prompt
 
@@ -36,7 +42,37 @@ format = "[\\($symbol$branch\\)]($style)"   # (branch) in parens, like the old p
 style = "bold blue"      # like the old bold-blue `$git_dirty`
 modified = "*"           # unstaged changes, like the old `*`
 staged = "^"             # staged-only changes, like the old `^`
-format = "([$modified$staged]($style))"   # bare * / ^ right after the branch, like the old `$git_dirty`
+stashed = "≡"            # something stashed
+conflicted = "="         # merge conflicts
+ahead = "⇡${count}"      # commits ahead of upstream
+behind = "⇣${count}"     # commits behind upstream
+diverged = "⇡${ahead_count}⇣${behind_count}"
+format = "([$conflicted$stashed$modified$staged$ahead_behind]($style))"
+
+# --- Contextual language versions (only inside a matching project) ---
+[python]
+symbol = " "
+style = "bold yellow"
+format = 'via [$symbol$version( \($virtualenv\))]($style) '
+pyenv_version_name = true   # read pyenv version name (faster than launching python)
+
+[java]
+symbol = " "
+style = "bold red"
+format = 'via [$symbol$version]($style) '
+
+[scala]
+symbol = " "
+style = "bold red"
+format = 'via [$symbol$version]($style) '
+
+
+# --- Last command's exit code (only shown on failure) ---
+[status]
+disabled = false
+symbol = "✘ "
+style = "bold red"
+format = '[$symbol$status]($style) '
 
 [character]
 success_symbol = "[❯](bold green)"
