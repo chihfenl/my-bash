@@ -15,6 +15,7 @@ either shell.
 | `shells/exports` | `~/.shells/exports` | user info, PATH, Homebrew prefix detection, version managers (`pyenv`/`jenv`/`scalaenv`/`sbtenv`) |
 | `shells/alias` | `~/.shells/alias` | aliases + `ls`/`grep` colors (works on GNU **and** BSD/macOS) |
 | `shells/functions` | `~/.shells/functions` | shared shell functions (e.g. the time-aware greeting) |
+| `shells/tools` | `~/.shells/tools` | interactive extras (`fzf`, `zoxide`, `eza`, `bat`, zsh plugins) — sourced last, no-op if not installed |
 | `shells/prompt`, `shells/git` | `~/.shells/` | legacy bash prompt — kept for reference, **no longer sourced** (Starship replaces it) |
 | `starship.toml` | `~/.config/starship.toml` | prompt config, shared by both shells |
 | `install.sh` | — | idempotent symlink installer (see Setup) |
@@ -28,6 +29,21 @@ welcome banner.
 - macOS (Intel **or** Apple Silicon — the Homebrew prefix is detected automatically)
 - [Homebrew](https://brew.sh)
 - [Starship](https://starship.rs) — `brew install starship`
+- *Optional* interactive tools, wired up automatically by `shells/tools` only if present:
+
+  ```bash
+  brew install eza bat zoxide fzf zsh-autosuggestions zsh-syntax-highlighting
+  ```
+
+  | Tool | Adds |
+  |------|------|
+  | [`eza`](https://eza.rocks) | modern `ls` (icons, `--git`, `--tree`); aliased to `ls`/`ll`/`la`/`lt` |
+  | [`bat`](https://github.com/sharkdp/bat) | syntax-highlighted `cat` (use `\cat` for the plain builtin) |
+  | [`zoxide`](https://github.com/ajeetdsouza/zoxide) | smarter `cd` — `z foo` jumps, `zi` picks interactively |
+  | [`fzf`](https://github.com/junegunn/fzf) | fuzzy finder — `Ctrl-R` history, `Ctrl-T` files, `Alt-C` cd |
+  | `zsh-autosuggestions` | fish-style history suggestion as you type (zsh) |
+  | `zsh-syntax-highlighting` | live command coloring (zsh) |
+
 - *Optional* version managers, auto-loaded only if present: `pyenv`, `jenv`, `scalaenv`, `sbtenv`
 
 ## Setup
@@ -83,6 +99,14 @@ user@host  ~/current/dir  (branch)*
 - bold **red** working directory
 - `(branch)` in the default color
 - bold **blue** dirty marker — `*` = unstaged changes, `^` = staged-only, nothing = clean working tree
+
+Contextual modules appear only when relevant, so plain dirs stay minimal:
+
+- **language versions** (`python`/`java`/`scala`) — only inside a matching project
+- **`☸ kubernetes`** context + namespace — only inside an infra/deploy dir
+  (`Chart.yaml`, `k8s/`, `helm/`, …); remove the `detect_*` lines to show it everywhere
+- **`took 4s`** command duration — only when a command runs longer than 2s
+- **`✘ 1`** exit code — only after a failing command
 
 Tweak `starship.toml` to customize; see <https://starship.rs/config/>.
 

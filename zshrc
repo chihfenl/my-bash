@@ -12,3 +12,7 @@ eval "$(starship init zsh)"
 greeting
 
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
+# Interactive enhancements (fzf, zoxide, eza, bat, zsh-autosuggestions,
+# zsh-syntax-highlighting) — sourced last so highlighting wraps all widgets
+source $HOME/.shells/tools

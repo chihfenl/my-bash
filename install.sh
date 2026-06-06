@@ -35,6 +35,7 @@ echo
 link shells/functions "$HOME/.shells/functions"
 link shells/exports   "$HOME/.shells/exports"
 link shells/alias     "$HOME/.shells/alias"
+link shells/tools     "$HOME/.shells/tools"
 
 # Shell entry points
 link bashrc "$HOME/.bashrc"
@@ -48,6 +49,19 @@ if command -v starship >/dev/null 2>&1; then
   echo "starship: $(starship --version | head -1)"
 else
   echo "NOTE: starship is not installed — run 'brew install starship'."
+fi
+
+# Optional interactive tools wired up by shells/tools (no-op if missing).
+missing=""
+for t in eza bat zoxide fzf; do
+  command -v "$t" >/dev/null 2>&1 || missing="$missing $t"
+done
+for f in zsh-autosuggestions zsh-syntax-highlighting; do
+  [ -d "$(brew --prefix 2>/dev/null)/share/$f" ] || missing="$missing $f"
+done
+if [ -n "$missing" ]; then
+  echo "TIP: optional tools not installed:$missing"
+  echo "     brew install eza bat zoxide fzf zsh-autosuggestions zsh-syntax-highlighting"
 fi
 
 echo "Done. Reload your shell:  exec \$SHELL -l"

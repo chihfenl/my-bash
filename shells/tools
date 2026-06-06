@@ -1,0 +1,49 @@
+# Interactive enhancements — sourced LAST by both ~/.bashrc and ~/.zshrc.
+# Sourced last so zsh-syntax-highlighting (which must load after all other
+# ZLE setup) ends up at the very end. Everything is guarded by command -v,
+# so this file is a no-op on a machine where the tools aren't installed.
+#
+# Install: brew install eza bat zoxide fzf zsh-autosuggestions zsh-syntax-highlighting
+
+# Homebrew prefix — reuse the one exports already found; only shell out if unset.
+BREW="${BREW_PREFIX:-}"
+[ -z "$BREW" ] && command -v brew >/dev/null 2>&1 && BREW="$(brew --prefix)"
+
+# --- eza: a modern ls (icons need a Nerd Font, same as the prompt glyphs) ---
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --group-directories-first --icons=auto'
+  alias ll='eza -l  --git --group-directories-first --icons=auto'
+  alias la='eza -la --git --group-directories-first --icons=auto'
+  alias lt='eza --tree --level=2 --icons=auto'
+fi
+
+# --- bat: a modern cat (plain style stays copy-paste friendly; use `bat` for the
+#     full treatment with line numbers/git gutter; `\cat` bypasses the alias) ---
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --style=plain --paging=never'
+fi
+
+# --- zoxide: smarter cd — `z foo` jumps to a frecent dir, `zi` picks interactively ---
+if command -v zoxide >/dev/null 2>&1; then
+  if   [ -n "$ZSH_VERSION" ];  then eval "$(zoxide init zsh)"
+  elif [ -n "$BASH_VERSION" ]; then eval "$(zoxide init bash)"
+  fi
+fi
+
+# --- fzf: fuzzy finder + key bindings (Ctrl-R history, Ctrl-T files, Alt-C cd) ---
+if command -v fzf >/dev/null 2>&1; then
+  if   [ -n "$ZSH_VERSION" ];  then eval "$(fzf --zsh)"
+  elif [ -n "$BASH_VERSION" ]; then eval "$(fzf --bash)"
+  fi
+fi
+
+# --- zsh-only: autosuggestions, then syntax-highlighting LAST ---
+if [ -n "$ZSH_VERSION" ] && [ -n "$BREW" ]; then
+  [ -r "$BREW/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] \
+    && source "$BREW/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  # Must be sourced last so it wraps all previously-defined ZLE widgets.
+  [ -r "$BREW/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] \
+    && source "$BREW/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+unset BREW

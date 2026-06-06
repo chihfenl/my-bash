@@ -15,3 +15,6 @@ eval "$(starship init bash)"
 greeting
 
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
+# Interactive enhancements (fzf, zoxide, eza, bat) — sourced last on purpose
+source $HOME/.shells/tools
