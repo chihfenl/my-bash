@@ -55,6 +55,9 @@ symbol = " "
 style = "bold yellow"
 format = 'via [$symbol$version( \($virtualenv\))]($style) '
 pyenv_version_name = true   # read pyenv version name (faster than launching python)
+detect_extensions = []      # don't trigger on a stray loose .py file — only on a
+                            # real project (pyproject.toml/requirements.txt/setup.py/
+                            # Pipfile/tox.ini/.python-version/__init__.py) or active venv
 
 [java]
 symbol = " "
