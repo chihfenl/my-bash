@@ -8,7 +8,7 @@ source $HOME/.shells/functions
 source $HOME/.shells/exports
 source $HOME/.shells/alias
 
-# Prompt (cross-shell, via Starship) — replaces the old prompt/git PS1 files
+# Prompt (cross-shell, via Starship)
 eval "$(starship init bash)"
 
 # Welcome message (time-aware greeting, defined in ~/.shells/functions)

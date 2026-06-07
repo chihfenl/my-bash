@@ -16,7 +16,6 @@ either shell.
 | `shells/alias` | `~/.shells/alias` | aliases + `ls`/`grep` colors (works on GNU **and** BSD/macOS) |
 | `shells/functions` | `~/.shells/functions` | shared shell functions (e.g. the time-aware greeting) |
 | `shells/tools` | `~/.shells/tools` | interactive extras (`fzf`, `zoxide`, `eza`, `bat`, zsh plugins) — sourced last, no-op if not installed |
-| `shells/prompt`, `shells/git` | `~/.shells/` | legacy bash prompt — kept for reference, **no longer sourced** (Starship replaces it) |
 | `starship.toml` | `~/.config/starship.toml` | prompt config, shared by both shells |
 | `install.sh` | — | idempotent symlink installer (see Setup) |
 
@@ -123,5 +122,4 @@ own machine only. Never commit secret files; add them to `.gitignore`.
 - The shell entry points end with `. "$HOME/.local/bin/env"` (added by tools like `uv`).
   If that file doesn't exist on your machine, remove the line or guard it with
   `[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"` to avoid a startup error.
-- `shells/prompt` and `shells/git` are kept only for history. The live prompt is Starship.
 ```
