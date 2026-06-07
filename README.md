@@ -18,6 +18,7 @@ either shell.
 | `shells/tools` | `~/.shells/tools` | interactive extras (`fzf`, `zoxide`, `eza`, `bat`, zsh plugins) — sourced last, no-op if not installed |
 | `starship.toml` | `~/.config/starship.toml` | prompt config, shared by both shells |
 | `install.sh` | — | idempotent symlink installer (see Setup) |
+| `vscode-dark.terminal` | import into Terminal.app | optional macOS Terminal.app profile — VS Code Dark+ palette + FiraCode Nerd Font |
 
 Both `bashrc` and `zshrc` do the same thing: set user info → source the shared
 `functions`/`exports`/`alias` → `eval "$(starship init <shell>)"` → print a time-aware
@@ -104,10 +105,24 @@ Contextual modules appear only when relevant, so plain dirs stay minimal:
 - **language versions** (`python`/`java`/`scala`) — only inside a matching project
 - **`☸ kubernetes`** context + namespace — only inside an infra/deploy dir
   (`Chart.yaml`, `k8s/`, `helm/`, …); remove the `detect_*` lines to show it everywhere
-- **`took 4s`** command duration — only when a command runs longer than 2s
+- **terraform** workspace — only inside a `.tf` project
+- **git state** (`REBASING 2/5`, `MERGING`, …) — only mid-operation
 - **`✘ 1`** exit code — only after a failing command
 
 Tweak `starship.toml` to customize; see <https://starship.rs/config/>.
+
+## Terminal.app theme (optional)
+
+`vscode-dark.terminal` is a macOS **Terminal.app** profile matching VS Code's **Dark+**
+palette, with **FiraCode Nerd Font Mono** baked in so the prompt glyphs and `eza` icons
+render. To use it:
+
+1. Double-click `vscode-dark.terminal` (or `open vscode-dark.terminal`).
+2. **Terminal → Settings → Profiles →** select **Dark+ (VS Code) →** click **Default**.
+
+It sets only Terminal.app's 16 ANSI colors + background/foreground + font; the 256-color
+`eza` palette (in `shells/tools`) is independent and layers on top. Not needed for VS Code's
+integrated terminal, which already follows your editor theme.
 
 ## Secrets
 
