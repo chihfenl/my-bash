@@ -51,13 +51,13 @@ format = "([$conflicted$stashed$modified$staged$ahead_behind]($style))"
 
 # --- Git operation in progress (rebase/merge/cherry-pick) — only during the op ---
 [git_state]
-style = "bold yellow"
+style = "179"
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
 
 # --- Contextual language versions (only inside a matching project) ---
 [python]
 symbol = " "
-style = "bold yellow"
+style = "179"
 format = 'via [$symbol$version( \($virtualenv\))]($style) '
 pyenv_version_name = true   # read pyenv version name (faster than launching python)
 detect_extensions = []      # don't trigger on a stray loose .py file — only on a
