@@ -16,6 +16,7 @@ either shell.
 | `shells/alias` | `~/.shells/alias` | aliases + `ls`/`grep` colors (works on GNU **and** BSD/macOS) |
 | `shells/functions` | `~/.shells/functions` | shared shell functions (e.g. the time-aware greeting) |
 | `shells/tools` | `~/.shells/tools` | interactive extras (`fzf`, `zoxide`, `eza`, `bat`, zsh plugins) — sourced last, no-op if not installed |
+| `shells/keychain` | `~/.shells/keychain` | `secret` command + startup loader that exports API keys from the macOS Keychain (see Secrets) |
 | `starship.toml` | `~/.config/starship.toml` | prompt config, shared by both shells |
 | `install.sh` | — | idempotent symlink installer (see Setup) |
 | `vscode-dark.terminal` | import into Terminal.app | optional macOS Terminal.app profile — VS Code Dark+ palette + FiraCode Nerd Font |
@@ -67,7 +68,7 @@ Reload your shell — `exec zsh` (or `exec bash`), or just open a new terminal.
 ```bash
 # 1. shared shell snippets (sourced by both shells)
 mkdir -p ~/.shells
-for f in functions exports alias; do ln -sf "$PWD/shells/$f" ~/.shells/"$f"; done
+for f in functions exports alias tools keychain; do ln -sf "$PWD/shells/$f" ~/.shells/"$f"; done
 
 # 2. shell entry points
 ln -sf "$PWD/bashrc" ~/.bashrc
@@ -126,9 +127,23 @@ integrated terminal, which already follows your editor theme.
 
 ## Secrets
 
-Keep credentials **out of this repo.** Anything sensitive (AWS keys, API tokens, etc.)
-belongs in a local, untracked file — e.g. `~/.shells/aws` — that you source from your
-own machine only. Never commit secret files; add them to `.gitignore`.
+API keys and tokens are stored in the **macOS Keychain** (encrypted, unlocked at
+login) and auto-exported into every shell by `shells/keychain` — so projects can read
+them from the environment instead of carrying their own `.env` files. No secret value
+ever lives in a file or in this repo.
+
+```bash
+secret set OPENAI_API_KEY     # hidden prompt; stores in Keychain + ~/.shells/secrets.local
+secret list                   # ✓ present / ✗ missing for each tracked name
+secret get OPENAI_API_KEY     # print one value (for scripts)
+secret rm  OPENAI_API_KEY     # delete from Keychain + manifest
+exec $SHELL                   # new shells now export the key
+```
+
+Which names auto-load is tracked in `~/.shells/secrets.local` (git-ignored via
+`*.local`; `shells/secrets.local.example` is the committed template). The loader is a
+no-op on machines without the `security` CLI, and silently skips names that aren't set
+(use `secret list` to audit).
 
 ## Notes
 
@@ -137,4 +152,3 @@ own machine only. Never commit secret files; add them to `.gitignore`.
 - The shell entry points end with `. "$HOME/.local/bin/env"` (added by tools like `uv`).
   If that file doesn't exist on your machine, remove the line or guard it with
   `[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"` to avoid a startup error.
-```

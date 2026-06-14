@@ -3,6 +3,7 @@
 # Shared, portable shell config (user info, PATH, functions, aliases)
 source $HOME/.shells/functions
 source $HOME/.shells/exports
+source $HOME/.shells/keychain
 source $HOME/.shells/alias
 
 # Prompt (cross-shell, via Starship)
