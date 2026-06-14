@@ -39,7 +39,38 @@ secret() {
 }
 
 # Stubs filled in by later tasks; defined now so `secret` and the harness load.
-_secret_set()  { printf 'not implemented\n' >&2; return 1; }
+_secret_manifest_add() {
+  local name="$1"
+  if [ ! -f "$SHELL_SECRET_MANIFEST" ]; then
+    mkdir -p "$(dirname "$SHELL_SECRET_MANIFEST")"
+    {
+      printf '# Auto-loaded into every shell from the macOS Keychain (service "%s").\n' "$SHELL_SECRET_SERVICE"
+      printf '# One env-var name per line. Manage with `secret set` / `secret rm`.\n'
+      printf '# Values live ONLY in the Keychain — never here.\n'
+    } > "$SHELL_SECRET_MANIFEST"
+  fi
+  grep -qxF "$name" "$SHELL_SECRET_MANIFEST" 2>/dev/null \
+    || printf '%s\n' "$name" >> "$SHELL_SECRET_MANIFEST"
+}
+
+_secret_set() {
+  local name="${1:-}" value
+  if ! _secret_valid_name "$name"; then
+    printf 'secret set: invalid name %s\n' "${name:-<empty>}" >&2; return 1
+  fi
+  printf 'Value for %s (input hidden): ' "$name" >&2
+  IFS= read -rs value
+  printf '\n' >&2
+  if [ -z "$value" ]; then
+    printf 'secret set: empty value, aborted\n' >&2; return 1
+  fi
+  if ! security add-generic-password -U -s "$SHELL_SECRET_SERVICE" -a "$name" -w "$value" 2>/dev/null; then
+    printf 'secret set: keychain store failed\n' >&2; unset value; return 1
+  fi
+  _secret_manifest_add "$name"
+  printf 'stored %s\n' "$name" >&2
+  unset value
+}
 _secret_get() {
   local name="${1:-}" value
   if ! _secret_valid_name "$name"; then
