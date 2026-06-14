@@ -40,7 +40,7 @@ secret() {
 
 # Stubs filled in by later tasks; defined now so `secret` and the harness load.
 _secret_manifest_add() {
-  local name="$1"
+  local name="${1:-}"
   if [ ! -f "$SHELL_SECRET_MANIFEST" ]; then
     mkdir -p "$(dirname "$SHELL_SECRET_MANIFEST")"
     {
@@ -67,7 +67,10 @@ _secret_set() {
   if ! security add-generic-password -U -s "$SHELL_SECRET_SERVICE" -a "$name" -w "$value" 2>/dev/null; then
     printf 'secret set: keychain store failed\n' >&2; unset value; return 1
   fi
-  _secret_manifest_add "$name"
+  if ! _secret_manifest_add "$name"; then
+    printf 'secret set: keychain stored but manifest update failed\n' >&2
+    unset value; return 1
+  fi
   printf 'stored %s\n' "$name" >&2
   unset value
 }
