@@ -68,7 +68,7 @@ Reload your shell — `exec zsh` (or `exec bash`), or just open a new terminal.
 ```bash
 # 1. shared shell snippets (sourced by both shells)
 mkdir -p ~/.shells
-for f in functions exports alias; do ln -sf "$PWD/shells/$f" ~/.shells/"$f"; done
+for f in functions exports alias tools keychain; do ln -sf "$PWD/shells/$f" ~/.shells/"$f"; done
 
 # 2. shell entry points
 ln -sf "$PWD/bashrc" ~/.bashrc
@@ -137,7 +137,7 @@ secret set OPENAI_API_KEY     # hidden prompt; stores in Keychain + ~/.shells/se
 secret list                   # ✓ present / ✗ missing for each tracked name
 secret get OPENAI_API_KEY     # print one value (for scripts)
 secret rm  OPENAI_API_KEY     # delete from Keychain + manifest
-exec $SHELL -l                # new shells now export the key
+exec $SHELL                   # new shells now export the key
 ```
 
 Which names auto-load is tracked in `~/.shells/secrets.local` (git-ignored via
@@ -152,4 +152,3 @@ no-op on machines without the `security` CLI, and silently skips names that aren
 - The shell entry points end with `. "$HOME/.local/bin/env"` (added by tools like `uv`).
   If that file doesn't exist on your machine, remove the line or guard it with
   `[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"` to avoid a startup error.
-```

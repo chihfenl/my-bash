@@ -5,8 +5,9 @@
 # backed up to <name>.bak before being replaced with a symlink; existing
 # symlinks are simply refreshed.
 #
-# NOTE: the entry points (bashrc/zshrc) do NOT source any secrets. Keep local
-# credentials in an untracked file (e.g. ~/.shells/aws) — see README "Secrets".
+# NOTE: shells/keychain loads secrets from the macOS Keychain at startup (it is
+# sourced by bashrc/zshrc). The machine-local manifest ~/.shells/secrets.local is
+# untracked — see README "Secrets".
 set -euo pipefail
 
 # Repo root = the directory this script lives in.
