@@ -91,7 +91,8 @@ _secret_list() {
   local name
   while IFS= read -r name || [ -n "$name" ]; do
     case "$name" in ""|'#'*) continue ;; esac
-    if security find-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" -w >/dev/null 2>&1; then
+    _secret_valid_name "$name" || continue
+    if security find-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" >/dev/null 2>&1; then
       printf '  ✓ %s\n' "$name"
     else
       printf '  ✗ %s (not set)\n' "$name"
