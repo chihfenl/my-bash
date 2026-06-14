@@ -84,7 +84,20 @@ _secret_get() {
   value=$(security find-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" -w 2>/dev/null) || return 1
   printf '%s\n' "$value"
 }
-_secret_list() { printf 'not implemented\n' >&2; return 1; }
+_secret_list() {
+  if [ ! -r "$SHELL_SECRET_MANIFEST" ]; then
+    printf 'no manifest (%s)\n' "$SHELL_SECRET_MANIFEST" >&2; return 0
+  fi
+  local name
+  while IFS= read -r name || [ -n "$name" ]; do
+    case "$name" in ""|'#'*) continue ;; esac
+    if security find-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" -w >/dev/null 2>&1; then
+      printf '  ✓ %s\n' "$name"
+    else
+      printf '  ✗ %s (not set)\n' "$name"
+    fi
+  done < "$SHELL_SECRET_MANIFEST"
+}
 _secret_rm() {
   local name="${1:-}" tmp
   if ! _secret_valid_name "$name"; then
