@@ -36,6 +36,7 @@ link shells/functions "$HOME/.shells/functions"
 link shells/exports   "$HOME/.shells/exports"
 link shells/alias     "$HOME/.shells/alias"
 link shells/tools     "$HOME/.shells/tools"
+link shells/keychain  "$HOME/.shells/keychain"
 
 # Shell entry points
 link bashrc "$HOME/.bashrc"
