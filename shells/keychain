@@ -1,0 +1,46 @@
+# keychain — macOS Keychain-backed secret loading. Sourced by both bash & zsh.
+#
+# Stores NO secret values; this file is pure logic. Each secret is one login-
+# Keychain generic-password item (service = $SHELL_SECRET_SERVICE, account =
+# the env-var name). A local, untracked manifest ($SHELL_SECRET_MANIFEST) lists
+# which names to auto-export at shell startup. Inert if `security` is absent.
+#
+#   secret set NAME    store/update a value (hidden prompt) + add to manifest
+#   secret get NAME    print one value
+#   secret list        show manifest names, ✓ present / ✗ missing in Keychain
+#   secret rm  NAME    delete the Keychain item + remove from manifest
+#   secret reload      re-run the startup loader in the current shell
+
+command -v security >/dev/null 2>&1 || return 0   # non-macOS: no-op
+
+: "${SHELL_SECRET_SERVICE:=shell-secret}"
+: "${SHELL_SECRET_MANIFEST:=$HOME/.shells/secrets.local}"
+
+# 0 if $1 is a valid POSIX env-var name, non-zero otherwise.
+_secret_valid_name() {
+  case "$1" in
+    ""|[!A-Za-z_]*)  return 1 ;;
+    *[!A-Za-z0-9_]*) return 1 ;;
+  esac
+  return 0
+}
+
+secret() {
+  local cmd="${1:-}"
+  [ "$#" -gt 0 ] && shift
+  case "$cmd" in
+    set)    _secret_set  "$@" ;;
+    get)    _secret_get  "$@" ;;
+    list)   _secret_list "$@" ;;
+    rm)     _secret_rm   "$@" ;;
+    reload) load_secrets ;;
+    *) printf 'usage: secret {set|get|list|rm|reload} [NAME]\n' >&2; return 2 ;;
+  esac
+}
+
+# Stubs filled in by later tasks; defined now so `secret` and the harness load.
+_secret_set()  { printf 'not implemented\n' >&2; return 1; }
+_secret_get()  { _secret_valid_name "${1:-}" || { printf 'invalid name\n' >&2; return 1; }; return 1; }
+_secret_list() { printf 'not implemented\n' >&2; return 1; }
+_secret_rm()   { printf 'not implemented\n' >&2; return 1; }
+load_secrets() { return 0; }
