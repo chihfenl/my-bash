@@ -123,3 +123,5 @@ load_secrets() {
     [ -n "$value" ] && export "$name=$value"
   done < "$SHELL_SECRET_MANIFEST"
 }
+
+load_secrets   # run at source time so every new shell gets the keys
