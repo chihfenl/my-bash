@@ -85,7 +85,20 @@ _secret_get() {
   printf '%s\n' "$value"
 }
 _secret_list() { printf 'not implemented\n' >&2; return 1; }
-_secret_rm()   { printf 'not implemented\n' >&2; return 1; }
+_secret_rm() {
+  local name="${1:-}" tmp
+  if ! _secret_valid_name "$name"; then
+    printf 'secret rm: invalid name %s\n' "${name:-<empty>}" >&2; return 1
+  fi
+  security delete-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" >/dev/null 2>&1
+  if [ -f "$SHELL_SECRET_MANIFEST" ]; then
+    tmp="$(mktemp)"
+    grep -vxF "$name" "$SHELL_SECRET_MANIFEST" > "$tmp" 2>/dev/null
+    mv "$tmp" "$SHELL_SECRET_MANIFEST"
+  fi
+  printf 'removed %s\n' "$name" >&2
+  return 0
+}
 load_secrets() {
   [ -r "$SHELL_SECRET_MANIFEST" ] || return 0
   local name value
