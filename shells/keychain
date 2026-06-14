@@ -40,7 +40,16 @@ secret() {
 
 # Stubs filled in by later tasks; defined now so `secret` and the harness load.
 _secret_set()  { printf 'not implemented\n' >&2; return 1; }
-_secret_get()  { _secret_valid_name "${1:-}" || { printf 'invalid name\n' >&2; return 1; }; return 1; }
+_secret_get() {
+  local name="${1:-}" value
+  if ! _secret_valid_name "$name"; then
+    printf 'secret get: invalid name %s\n' "${name:-<empty>}" >&2; return 1
+  fi
+  # `security` exits 44 (not 1) when the item is missing — normalize to 0/1
+  # so callers get a predictable contract.
+  value=$(security find-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" -w 2>/dev/null) || return 1
+  printf '%s\n' "$value"
+}
 _secret_list() { printf 'not implemented\n' >&2; return 1; }
 _secret_rm()   { printf 'not implemented\n' >&2; return 1; }
 load_secrets() { return 0; }
