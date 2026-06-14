@@ -38,7 +38,7 @@ secret() {
   esac
 }
 
-# Stubs filled in by later tasks; defined now so `secret` and the harness load.
+# Internal helpers implementing each `secret` subcommand and the startup loader.
 _secret_manifest_add() {
   local name="${1:-}"
   if [ ! -f "$SHELL_SECRET_MANIFEST" ]; then

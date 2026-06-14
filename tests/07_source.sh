@@ -13,6 +13,13 @@ got="$(
 )"
 assert_eq "value auto-exported on source" "srcval" "$got"
 
+got_zsh="$(
+  SHELL_SECRET_SERVICE="$SHELL_SECRET_SERVICE" \
+  SHELL_SECRET_MANIFEST="$SHELL_SECRET_MANIFEST" \
+  zsh -c '. "'"$REPO"'/shells/keychain"; printf %s "$TEST_A"'
+)"
+assert_eq "value auto-exported on source (zsh)" "srcval" "$got_zsh"
+
 # Module must parse cleanly in BOTH shells.
 bash -n "$REPO/shells/keychain"; assert_eq "bash parses keychain" "0" "$?"
 zsh  -n "$REPO/shells/keychain"; assert_eq "zsh parses keychain"  "0" "$?"
