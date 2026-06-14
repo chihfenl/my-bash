@@ -3,6 +3,9 @@
 # tests never read or write your real secrets. Cleans up on exit.
 set -u
 
+# NOTE: assumes test files live directly in tests/ (siblings of this harness),
+# so $0's dirname is tests/ under both bash and zsh. Don't nest test files in
+# subdirectories without revisiting this.
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 export SHELL_SECRET_SERVICE="shell-secret-test-$$"
 TEST_MANIFEST="$(mktemp)"
@@ -17,7 +20,13 @@ assert_eq() { # desc expected actual
     _FAILS=$((_FAILS + 1))
   fi
 }
-_report() { if [ "$_FAILS" -eq 0 ]; then printf 'PASS\n'; else printf '%d FAILURES\n' "$_FAILS"; exit 1; fi; }
+_report() {
+  if [ "$_FAILS" -eq 0 ]; then
+    printf 'PASS\n'; exit 0
+  else
+    printf '%d FAILURES\n' "$_FAILS"; exit 1
+  fi
+}
 
 _keychain_cleanup() {
   if [ -f "$TEST_MANIFEST" ]; then
