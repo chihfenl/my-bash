@@ -108,7 +108,11 @@ _secret_rm() {
   if [ -f "$SHELL_SECRET_MANIFEST" ]; then
     tmp="$(mktemp)"
     grep -vxF "$name" "$SHELL_SECRET_MANIFEST" > "$tmp" 2>/dev/null
-    mv "$tmp" "$SHELL_SECRET_MANIFEST" || rm -f "$tmp"
+    if ! mv "$tmp" "$SHELL_SECRET_MANIFEST"; then
+      rm -f "$tmp"
+      printf 'secret rm: keychain item removed but manifest update failed\n' >&2
+      return 1
+    fi
   fi
   printf 'removed %s\n' "$name" >&2
   return 0
