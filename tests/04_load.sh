@@ -17,4 +17,14 @@ assert_eq "missing item left unset (empty)" ""       "${TEST_MISSING:-}"
 SHELL_SECRET_MANIFEST="/nonexistent/path/secrets.local" load_secrets
 assert_eq "missing manifest is a no-op"     "0"      "$?"
 
+
+# A manifest name that is a valid Keychain account but NOT a valid shell
+# identifier must be skipped silently (no `export: not a valid identifier`).
+security add-generic-password -U -s "$SHELL_SECRET_SERVICE" -a 'MY-VAR' -w 'x' 2>/dev/null
+printf '%s\n' 'MY-VAR' >> "$SHELL_SECRET_MANIFEST"
+_errf="$(mktemp)"
+load_secrets 2>"$_errf"
+assert_eq "invalid manifest name: silent startup" "" "$(cat "$_errf")"
+rm -f "$_errf"
+
 _report

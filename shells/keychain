@@ -91,6 +91,7 @@ load_secrets() {
   local name value
   while IFS= read -r name || [ -n "$name" ]; do
     case "$name" in ""|'#'*) continue ;; esac
+    _secret_valid_name "$name" || continue
     value=$(security find-generic-password -s "$SHELL_SECRET_SERVICE" -a "$name" -w 2>/dev/null) || continue
     [ -n "$value" ] && export "$name=$value"
   done < "$SHELL_SECRET_MANIFEST"
