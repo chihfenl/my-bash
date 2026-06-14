@@ -94,7 +94,7 @@ _secret_rm() {
   if [ -f "$SHELL_SECRET_MANIFEST" ]; then
     tmp="$(mktemp)"
     grep -vxF "$name" "$SHELL_SECRET_MANIFEST" > "$tmp" 2>/dev/null
-    mv "$tmp" "$SHELL_SECRET_MANIFEST"
+    mv "$tmp" "$SHELL_SECRET_MANIFEST" || rm -f "$tmp"
   fi
   printf 'removed %s\n' "$name" >&2
   return 0
